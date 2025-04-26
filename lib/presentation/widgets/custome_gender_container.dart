@@ -23,7 +23,10 @@ class CustomeGenderContainer extends StatelessWidget {
       decoration: BoxDecoration(
         color: isSelected ? Colors.blue : darkGrey,
         borderRadius: BorderRadius.circular(10),
-      ),
+   border: Border.all(
+      color:isSelected? Colors.white: Colors.grey[600]!, // The color of your border
+      width: 1.0,              // The thickness of the border
+    ), ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
