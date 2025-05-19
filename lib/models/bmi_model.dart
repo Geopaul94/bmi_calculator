@@ -1,15 +1,12 @@
 class BMIModel {
-  final double height;
-  final double weight;
   final String gender;
-  final double? bmi;
+  final double age;
+
   final String? category;
 
   BMIModel({
-    required this.height,
-    required this.weight,
     required this.gender,
-    this.bmi,
+    required this.age,
     this.category,
   });
 
@@ -19,13 +16,12 @@ class BMIModel {
     String? gender,
     double? bmi,
     String? category,
+    double? age,
   }) {
     return BMIModel(
-      height: height ?? this.height,
-      weight: weight ?? this.weight,
       gender: gender ?? this.gender,
-      bmi: bmi ?? this.bmi,
+      age: age ?? this.age,
       category: category ?? this.category,
     );
   }
-} 
+}

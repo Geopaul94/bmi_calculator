@@ -7,24 +7,76 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:provider/provider.dart';
 import 'package:bmi_calculator/main.dart';
+import 'package:bmi_calculator/viewmodels/height_weight_slider.dart';
+import 'package:bmi_calculator/viewmodels/bmi_viewmodel.dart';
+import 'package:bmi_calculator/presentation/screens/home_screen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('BMI Calculator App Smoke Test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => HeightWeightSlider()),
+          ChangeNotifierProvider(create: (_) => BMIViewModel()),
+        ],
+        child: const MaterialApp(
+          home: MyApp(),
+        ),
+      ),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that the initial gender selection is present
+    expect(find.text('Male'), findsOneWidget);
+    expect(find.text('Female'), findsOneWidget);
+    expect(find.text('Others'), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Verify that height and weight sliders are present
+    expect(find.byType(Slider), findsNWidgets(2));
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('Gender Selection Test', (WidgetTester tester) async {
+    final bmiViewModel = BMIViewModel();
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => HeightWeightSlider()),
+          ChangeNotifierProvider.value(value: bmiViewModel),
+        ],
+        child: const MaterialApp(
+          home: MyApp(),
+        ),
+      ),
+    );
+
+    // Find and tap the Female gender container
+    final femaleContainer = find.text('Female');
+    expect(femaleContainer, findsOneWidget);
+
+    await tester.tap(femaleContainer);
+    await tester.pumpAndSettle();
+
+    // Verify that the gender was updated
+    expect(bmiViewModel.bmiModel.gender, equals('Female'));
+  });
+
+  testWidgets('Calculate BMI Button Test', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => HeightWeightSlider()),
+          ChangeNotifierProvider(create: (_) => BMIViewModel()),
+        ],
+        child: const MaterialApp(
+          home: MyApp(),
+        ),
+      ),
+    );
+
+    // Find and verify the Calculate BMI button
+    expect(find.text('Calculate BMI'), findsOneWidget);
   });
 }

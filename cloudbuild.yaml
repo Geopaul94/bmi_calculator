@@ -1,0 +1,97 @@
+# steps:
+#   # Install Flutter
+#   - name: 'gcr.io/cloud-builders/docker'
+#     args: ['pull', 'cirrusci/flutter:stable']
+
+#   # Get dependencies
+#   - name: 'cirrusci/flutter:stable'
+#     entrypoint: 'flutter'
+#     args: ['pub', 'get']
+
+#   # Run tests
+#   - name: 'cirrusci/flutter:stable'
+#     entrypoint: 'flutter'
+#     args: ['test']
+
+#   # Build Android APK
+#   - name: 'cirrusci/flutter:stable'
+#     entrypoint: 'flutter'
+#     args: ['build', 'apk', '--release']
+#     env:
+#       - 'FLUTTER_BUILD_NUMBER=$_BUILD_NUMBER'
+
+#   # Build iOS IPA
+#   - name: 'cirrusci/flutter:stable'
+#     entrypoint: 'flutter'
+#     args: ['build', 'ios', '--release', '--no-codesign']
+#     env:
+#       - 'FLUTTER_BUILD_NUMBER=$_BUILD_NUMBER'
+
+#   # Deploy to Play Store
+#   - name: 'gcr.io/cloud-builders/gcloud'
+#     entrypoint: 'bash'
+#     args:
+#       - '-c'
+#       - |
+#         gcloud auth activate-service-account --key-file=play-store-key.json
+#         gcloud firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
+#           --app $_FIREBASE_APP_ID \
+#           --release-notes "Build $_BUILD_NUMBER" \
+#           --groups "testers"
+
+#   # Deploy to App Store
+#   - name: 'gcr.io/cloud-builders/gcloud'
+#     entrypoint: 'bash'
+#     args:
+#       - '-c'
+#       - |
+#         gcloud auth activate-service-account --key-file=app-store-key.json
+#         xcrun altool --upload-app \
+#           --type ios \
+#           --file build/ios/ipa/bmi_calculator.ipa \
+#           --apiKey $_APP_STORE_API_KEY \
+#           --apiIssuer $_APP_STORE_ISSUER_ID
+
+# artifacts:
+#   objects:
+#     location: 'gs://$_BUCKET_NAME/'
+#     paths: 
+#       - 'build/app/outputs/flutter-apk/app-release.apk'
+#       - 'build/ios/ipa/bmi_calculator.ipa'
+
+# substitutions:
+#   _BUILD_NUMBER: '1'  # This will be replaced with actual build number
+#   _FIREBASE_APP_ID: ''  # Your Firebase App ID
+#   _APP_STORE_API_KEY: ''  # Your App Store Connect API Key
+#   _APP_STORE_ISSUER_ID: ''  # Your App Store Connect Issuer ID
+
+# timeout: '3600s'
+
+
+
+steps:
+  # Install Flutter
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['pull', 'cirrusci/flutter:stable']
+
+  # Get dependencies
+  - name: 'cirrusci/flutter:stable'
+    entrypoint: 'flutter'
+    args: ['pub', 'get']
+
+  # Run tests
+  - name: 'cirrusci/flutter:stable'
+    entrypoint: 'flutter'
+    args: ['test']
+
+  # Build APK
+  - name: 'cirrusci/flutter:stable'
+    entrypoint: 'flutter'
+    args: ['build', 'apk', '--release']
+
+artifacts:
+  objects:
+    location: 'gs://$sample_gcp_cicd_geo/'
+    paths: ['build/app/outputs/flutter-apk/app-release.apk']
+
+timeout: '1800s' 
