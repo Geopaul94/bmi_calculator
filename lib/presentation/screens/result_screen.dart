@@ -3,31 +3,31 @@ import 'package:bmi_calculator/utilities/constants/constants.dart';
 import 'package:flutter/material.dart';
 
 class ResultScreen extends StatelessWidget {
-    var bmiResult;
-   ResultScreen({super.key, required this.bmiResult});
+  final double bmiResult;
+  const ResultScreen({super.key, required this.bmiResult});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Center(
+        child: Center(
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Center(
-                  child: CustomText(
-                    text: "Your BMI Result",
-                    fontSize: 24,
-                    color: white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                const CustomText(
+                  text: "Your BMI Result",
+                  fontSize: 24,
+                  color: white,
+                  fontWeight: FontWeight.bold,
                 ),
-                  Center(
-                  child:  CustomText(
-                    text:bmiResult.toString(),
-                    fontSize: 24,
-                    color: white,
-                    fontWeight: FontWeight.bold,)
+                const SizedBox(height: 16),
+                CustomText(
+                  text: bmiResult.toStringAsFixed(1), // optional: limit decimals
+                  fontSize: 48,
+                  color: white,
+                  fontWeight: FontWeight.bold,
                 ),
               ],
             ),

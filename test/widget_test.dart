@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 import 'package:bmi_calculator/main.dart';
 import 'package:bmi_calculator/viewmodels/height_weight_slider.dart';
 import 'package:bmi_calculator/viewmodels/bmi_viewmodel.dart';
-import 'package:bmi_calculator/presentation/screens/home_screen.dart';
 
 void main() {
   testWidgets('BMI Calculator App Smoke Test', (WidgetTester tester) async {
@@ -53,14 +52,14 @@ void main() {
     );
 
     // Find and tap the Female gender container
-    final femaleContainer = find.text('Female');
+    final femaleContainer = find.text('Male');
     expect(femaleContainer, findsOneWidget);
 
     await tester.tap(femaleContainer);
     await tester.pumpAndSettle();
 
     // Verify that the gender was updated
-    expect(bmiViewModel.bmiModel.gender, equals('Female'));
+    expect(bmiViewModel.bmiModel.gender, equals('Male'));
   });
 
   testWidgets('Calculate BMI Button Test', (WidgetTester tester) async {

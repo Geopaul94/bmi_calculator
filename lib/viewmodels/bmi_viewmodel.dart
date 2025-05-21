@@ -8,7 +8,6 @@ class BMIViewModel extends ChangeNotifier {
   );
 
   BMIModel get bmiModel => _bmiModel;
-
   void updateGender(String gender) {
     _bmiModel = _bmiModel.copyWith(gender: gender);
     notifyListeners();
