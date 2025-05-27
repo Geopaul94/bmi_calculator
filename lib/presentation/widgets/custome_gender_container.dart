@@ -54,13 +54,13 @@ import 'package:flutter/material.dart';
 //   }
 // }
 
-class CustomeGenderContainer extends StatelessWidget {
+class CustomGenderContainer extends StatelessWidget {
   final String text;
   final Icon? icon;
   final bool isSelected;
   final Image? imageOthers;
 
-  const CustomeGenderContainer({
+  const CustomGenderContainer({
     super.key,
     required this.text,
     this.icon,

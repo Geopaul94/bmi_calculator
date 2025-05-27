@@ -22,8 +22,34 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'BMI Calculator v1.1',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          useMaterial3: true,
+          colorScheme: ColorScheme.dark(
+            primary: const Color(0xFF4CAF50),
+            secondary: const Color(0xFF81C784),
+            surface: const Color(0xFF1E1E1E),
+            background: Colors.black,
+            error: Colors.red.shade400,
+          ),
           scaffoldBackgroundColor: Colors.black,
+          sliderTheme: SliderThemeData(
+            activeTrackColor: const Color(0xFF4CAF50),
+            inactiveTrackColor: Colors.grey.shade800,
+            thumbColor: const Color(0xFF4CAF50),
+            overlayColor: const Color(0xFF4CAF50).withOpacity(0.2),
+            valueIndicatorColor: const Color(0xFF4CAF50),
+            valueIndicatorTextStyle: const TextStyle(color: Colors.white),
+          ),
+          textTheme: const TextTheme(
+            displayLarge: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            bodyLarge: TextStyle(
+              fontSize: 18,
+              color: Colors.white70,
+            ),
+          ),
         ),
         home: const HomeScreen(),
       ),
