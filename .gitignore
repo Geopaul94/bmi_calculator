@@ -70,3 +70,5 @@ coverage/
 .buildlog/
 .history
 .svn/
+play-store-key.json
+new_play_store_key.json
