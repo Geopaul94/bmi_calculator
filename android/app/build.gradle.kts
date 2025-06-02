@@ -31,8 +31,8 @@ android {
         applicationId = "com.geo.bmiapp"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 4
-        versionName = "1.0.1"
+        versionCode = 23
+        versionName = "2.3"
     }
 
     signingConfigs {

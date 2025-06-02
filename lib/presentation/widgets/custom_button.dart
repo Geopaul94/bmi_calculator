@@ -1,5 +1,4 @@
 import 'package:bmi_calculator/presentation/screens/result_screen.dart';
-import 'package:bmi_calculator/utilities/constants/constants.dart';
 import 'package:bmi_calculator/viewmodels/height_weight_slider.dart';
 import 'package:flutter/material.dart';
 
@@ -32,7 +31,7 @@ class CustomButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: theme.colorScheme.primary.withOpacity(0.3),
+            color: theme.colorScheme.primary.withAlpha(77),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),

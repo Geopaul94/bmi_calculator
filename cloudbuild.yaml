@@ -1,200 +1,163 @@
-# # GCP Cloud Build configuration for BMI Calculator
-# # Similar to GitHub Actions workflow
-
-# # Define build steps
-# steps:
-#   # Stage 1: Setup and Dependencies
-#   - name: 'gcr.io/cloud-builders/docker'
-#     id: 'setup'
-#     args: ['pull', 'cirrusci/flutter:stable']
-#     waitFor: ['-']  # Start immediately
-
-#   # Stage 2: Get Dependencies
-#   - name: 'cirrusci/flutter:stable'
-#     id: 'dependencies'
-#     entrypoint: 'flutter'
-#     args: ['pub', 'get']
-#     waitFor: ['setup']
-
-#   # Stage 3: Code Analysis
-#   - name: 'cirrusci/flutter:stable'
-#     id: 'analyze'
-#     entrypoint: 'flutter'
-#     args: ['analyze']
-#     waitFor: ['dependencies']
-
-#   # Stage 4: Run Tests
-#   - name: 'cirrusci/flutter:stable'
-#     id: 'test'
-#     entrypoint: 'flutter'
-#     args: ['test', '--coverage']
-#     waitFor: ['analyze']
-
-#   # Stage 5: Build APK (Debug)
-#   - name: 'cirrusci/flutter:stable'
-#     id: 'build-debug'
-#     entrypoint: 'flutter'
-#     args: ['build', 'apk', '--debug']
-#     waitFor: ['test']
-
-#   # Stage 6: Build APK (Release)
-#   - name: 'cirrusci/flutter:stable'
-#     id: 'build-release'
-#     entrypoint: 'flutter'
-#     args: ['build', 'apk', '--release']
-#     waitFor: ['build-debug']
-
-#   # Stage 7: Upload to Cloud Storage
-#   - name: 'gcr.io/cloud-builders/gsutil'
-#     id: 'upload'
-#     args: ['cp', 'build/app/outputs/flutter-apk/app-release.apk', 'gs://sample_gcp_cicd_geo/app-release.apk']
-#     waitFor: ['build-release']
-
-#   # Stage 8: Deploy to Firebase App Distribution (if configured)
-#   - name: 'gcr.io/cloud-builders/gcloud'
-#     id: 'deploy-test'
-#     entrypoint: 'bash'
-#     args:
-#       - '-c'
-#       - |
-#         if [ -f "play-store-key.json" ]; then
-#           gcloud auth activate-service-account --key-file=play-store-key.json
-#           gcloud firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
-#             --app $_FIREBASE_APP_ID \
-#             --release-notes "Build $BUILD_ID" \
-#             --groups "testers"
-#         fi
-#     waitFor: ['upload']
-
-# # Define build timeout
-# timeout: '3600s'
-
-# # Define build artifacts
-# artifacts:
-#   objects:
-#     location: 'gs://sample_gcp_cicd_geo/'
-#     paths: 
-#       - 'app-release.apk'
-#       - 'build/app/outputs/flutter-apk/app-debug.apk'
-
-# # Define build substitutions
-# substitutions:
-#   _FIREBASE_APP_ID: ''  # Your Firebase App ID
-#   _ENVIRONMENT: 'development'  # Can be development, staging, or production
-
-# # Define build options
-# options:
-#   logging: CLOUD_LOGGING_ONLY
-#   machineType: 'E2_HIGHCPU_8'  # Use a more powerful machine for faster builds
-#   dynamicSubstitutions: true
-
-# # Define build tags
-# tags:
-#   - 'flutter'
-#   - 'bmi-calculator'
-#   - '${_ENVIRONMENT}' 
-# GCP Cloud Build configuration for BMI Calculator
-# Similar to GitHub Actions workflow
-
-
-
-# GCP Cloud Build configuration for BMI Calculator
-# Similar to GitHub Actions workflow
-
 # Define build steps
 steps:
-  # Stage 1: Get Dependencies
+  # Stage 1: Get Flutter Dependencies
   - name: 'ghcr.io/cirruslabs/flutter:stable'
-    id: 'dependencies'
+    id: 'flutter-dependencies'
     entrypoint: 'flutter'
     args: ['pub', 'get']
 
-  # Stage 2: Code Analysis
+  # Stage 2: Run Flutter Tests
   - name: 'ghcr.io/cirruslabs/flutter:stable'
-    id: 'analyze'
+    id: 'flutter-test'
     entrypoint: 'flutter'
-    args: ['analyze']
-    waitFor: ['dependencies']
+    args: ['test']
+    waitFor: ['flutter-dependencies']
 
-  # Stage 3: Run Tests
+  # Stage 3: Build Android App Bundle
   - name: 'ghcr.io/cirruslabs/flutter:stable'
-    id: 'test'
+    id: 'build-android-release'
     entrypoint: 'flutter'
-    args: ['test', '--coverage']
-    waitFor: ['analyze']
+    args: ['build', 'appbundle', '--release']
+    waitFor: ['flutter-test']
 
-  # Stage 4: Build APK (Debug)
-  - name: 'ghcr.io/cirruslabs/flutter:stable'
-    id: 'build-debug'
-    entrypoint: 'flutter'
-    args: ['build', 'apk', '--debug']
-    waitFor: ['test']
-
-  # Stage 5: Build APK (Release)
-  - name: 'ghcr.io/cirruslabs/flutter:stable'
-    id: 'build-release'
-    entrypoint: 'flutter'
-    args: ['build', 'apk', '--release']
-    waitFor: ['build-debug']
-
-  # Stage 6: Copy APKs to workspace
+  # Stage 4: Prepare Release Artifacts
   - name: 'bash'
-    id: 'copy-artifacts'
+    id: 'prepare-release'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         mkdir -p artifacts
-        cp build/app/outputs/flutter-apk/app-release.apk artifacts/
-        cp build/app/outputs/flutter-apk/app-debug.apk artifacts/
-    waitFor: ['build-release']
+        cp build/app/outputs/bundle/release/app-release.aab artifacts/
+        echo "${_VERSION_PREFIX}-$(date +%Y%m%d)-$BUILD_ID" > artifacts/version.txt
+        echo "Building version: $(cat artifacts/version.txt)"
+    waitFor: ['build-android-release']
 
-  # Stage 7: Upload to Cloud Storage
+  # Stage 5: Upload to Cloud Storage
   - name: 'gcr.io/cloud-builders/gsutil'
-    id: 'upload'
-    args: ['cp', 'artifacts/app-release.apk', 'gs://sample_gcp_cicd_geo/app-release.apk']
-    waitFor: ['copy-artifacts']
+    id: 'upload-to-storage'
+    args:
+      - 'cp'
+      - 'artifacts/app-release.aab'
+      - 'gs://${_BUCKET_NAME}/releases/${_VERSION_PREFIX}-${BUILD_ID}.aab'
+    waitFor: ['prepare-release']
 
-  # Stage 8: Deploy to Firebase App Distribution (if configured)
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'deploy-test'
+  # Stage 6: Get Play Store Credentials
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'fetch-playstore-key'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        if [ -f "play-store-key.json" ]; then
-          gcloud auth activate-service-account --key-file=play-store-key.json
-          gcloud firebase appdistribution:distribute artifacts/app-release.apk \
-            --app $_FIREBASE_APP_ID \
-            --release-notes "Build $BUILD_ID" \
-            --groups "testers"
+        echo "Fetching Play Store service account key..."
+        
+        # Create directory for key
+        mkdir -p /workspace/keys
+        
+        # Fetch and save the key with debug output
+        echo "Attempting to fetch secret..."
+        gcloud secrets versions access latest --secret="playstore-credentials" > /workspace/keys/raw_key.json
+        
+        # Check if file exists and has content
+        if [ ! -s /workspace/keys/raw_key.json ]; then
+          echo "Error: Key file is empty"
+          exit 1
         fi
-    waitFor: ['upload']
+        
+        # Display file info (without showing sensitive content)
+        echo "Key file info:"
+        ls -l /workspace/keys/raw_key.json
+        
+        # Try to format the JSON (this will validate it)
+        echo "Attempting to format JSON..."
+        if ! cat /workspace/keys/raw_key.json | python3 -m json.tool > /workspace/keys/formatted_key.json 2>/dev/null; then
+          echo "Error: Invalid JSON format"
+          echo "First few characters of file (for debugging):"
+          head -c 50 /workspace/keys/raw_key.json
+          exit 1
+        fi
+        
+        # Move the formatted key to final location
+        mv /workspace/keys/formatted_key.json key.json
+        chmod 600 key.json
+        
+        echo "Successfully processed Play Store credentials"
+        echo "Final key file info:"
+        ls -l key.json
+    waitFor: ['prepare-release']
 
-# Define build timeout
-timeout: '3600s'
+  # Stage 7: Deploy to Play Store
+  - name: 'ruby:3.1'
+    id: 'deploy-to-playstore'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        
+        echo "Installing required gems..."
+        gem install bundler fastlane -N
 
-# Define build artifacts
-artifacts:
-  objects:
-    location: 'gs://sample_gcp_cicd_geo/'
-    paths:
-      - 'artifacts/app-release.apk'
-      - 'artifacts/app-debug.apk'
+        echo "Creating Fastfile..."
+        mkdir -p fastlane
+        cat > fastlane/Fastfile <<EOF
+        default_platform(:android)
+        platform :android do
+          desc "Upload to Play Store Internal Track"
+          lane :deploy_internal do
+            upload_to_play_store(
+              json_key: "key.json",
+              package_name: "com.geo.bmiapp",
+              track: "internal",
+              aab: "artifacts/app-release.aab",
+              release_status: "draft",
+              validate_only: true  # First validate without uploading
+            )
+            
+            # If validation succeeds, do the actual upload
+            upload_to_play_store(
+              json_key: "key.json",
+              package_name: "com.geo.bmiapp",
+              track: "internal",
+              aab: "artifacts/app-release.aab",
+              release_status: "draft"
+            )
+          end
+        end
+        EOF
 
-# Define build substitutions
+        echo "Verifying key.json exists and is readable..."
+        if [ ! -f key.json ]; then
+          echo "Error: key.json not found"
+          exit 1
+        fi
+
+        echo "Verifying AAB exists..."
+        if [ ! -f artifacts/app-release.aab ]; then
+          echo "Error: app-release.aab not found"
+          ls -la artifacts/
+          exit 1
+        fi
+
+        echo "Running Fastlane..."
+        fastlane android deploy_internal
+    waitFor: ['upload-to-storage', 'fetch-playstore-key']
+
+# Define timeout
+timeout: '1800s'  # 30 minutes
+
+# Define substitutions
 substitutions:
-  _FIREBASE_APP_ID: ''  # Your Firebase App ID
-  _ENVIRONMENT: 'development'  # Can be development, staging, or production
+  _BUCKET_NAME: 'sample-gcp-actions-geo_cloudbuild'
+  _VERSION_PREFIX: '1.0.3'
 
-# Define build options
+# Build options
 options:
   logging: CLOUD_LOGGING_ONLY
-  machineType: 'E2_HIGHCPU_8'  # Use a more powerful machine for faster builds
-  dynamicSubstitutions: true
+  machineType: 'E2_HIGHCPU_8'
 
-# Define build tags
+# Tags
 tags:
   - 'flutter'
   - 'bmi-calculator'
-  - '${_ENVIRONMENT}' 
+  - 'android'

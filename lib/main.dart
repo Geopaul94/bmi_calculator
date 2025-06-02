@@ -20,14 +20,13 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'BMI Calculator v1.1',
+        title: 'BMI Calculator ',
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.dark(
             primary: const Color(0xFF4CAF50),
             secondary: const Color(0xFF81C784),
             surface: const Color(0xFF1E1E1E),
-            background: Colors.black,
             error: Colors.red.shade400,
           ),
           scaffoldBackgroundColor: Colors.black,
