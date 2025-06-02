@@ -1,3 +1,10 @@
+# Service account keys
+*.json.key
+*_key.json
+play-store-key.json
+new_play_store_key.json
+key.json
+
 # Miscellaneous
 *.class
 *.log
@@ -70,5 +77,3 @@ coverage/
 .buildlog/
 .history
 .svn/
-play-store-key.json
-new_play_store_key.json
