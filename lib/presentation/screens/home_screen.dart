@@ -36,7 +36,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Calculate your Body Mass Index',
+                 'Calculate your Body Mass Index And Stay Healthy',
                   style: theme.textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 32),

@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
             valueIndicatorTextStyle: const TextStyle(color: Colors.white),
           ),
           textTheme: const TextTheme(
+            
             displayLarge: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,

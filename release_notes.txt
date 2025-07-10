@@ -1,3 +1,0 @@
-en-US:
-- Initial release
-- Bug fixes
