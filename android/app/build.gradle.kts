@@ -56,9 +56,9 @@ android {
 
     buildTypes {
         release {
-            // Aggressive optimizations for size reduction
+            // Optimized for Android 14 compatibility
             isMinifyEnabled = true
-            isShrinkResources = true
+            isShrinkResources = false
             
             // Use optimized ProGuard rules for maximum compression
             proguardFiles(
@@ -161,9 +161,6 @@ android {
 dependencies {
     // Required for Java 8+ features on older Android versions
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
-    
-    // Play Store components (required by Flutter for release builds)
-    implementation("com.google.android.play:core:1.10.3")
 }
 
 flutter {

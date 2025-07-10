@@ -33,12 +33,6 @@
 # Keep crash reporting
 -keepattributes *Annotation*
 
-# Play Store components
--keep class com.google.android.play.core.** { *; }
--keep class com.google.android.play.core.splitcompat.** { *; }
--keep class com.google.android.play.core.splitinstall.** { *; }
--keep class com.google.android.play.core.tasks.** { *; }
-
 # Keep generic signature of Call, Response (R8 full mode strips signatures from non-kept items)
 -keep,allowobfuscation,allowshrinking interface retrofit2.Call
 -keep,allowobfuscation,allowshrinking class retrofit2.Response
@@ -71,7 +65,14 @@
 # Keep only essential BMI Calculator classes
 -keep class com.geo.bmi_calculator.MainActivity { *; }
 
-# Remove unused Flutter debugging symbols
+# Keep essential Flutter classes
 -keep class io.flutter.** { *; }
 -keep class io.flutter.embedding.** { *; }
--dontwarn io.flutter.embedding.engine.deferredcomponents.** 
+
+# Ignore missing Play Core classes (not used by simple apps)
+-dontwarn com.google.android.play.core.**
+-dontwarn io.flutter.embedding.engine.deferredcomponents.**
+
+# Keep classes that might be referenced but not used
+-keep class * extends io.flutter.embedding.android.FlutterActivity { *; }
+-keep class * extends io.flutter.embedding.android.FlutterFragment { *; } 
