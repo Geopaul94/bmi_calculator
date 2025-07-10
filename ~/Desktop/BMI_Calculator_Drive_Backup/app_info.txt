@@ -1,0 +1,38 @@
+BMI CALCULATOR - APP LICENSING & UPDATE INFO
+==============================================
+
+📱 APP DETAILS:
+Package Name: com.geo.bmi_calculator
+App Name: BMI Calculator
+Current Version: 1.0.0+1 
+Description: BMI Calculator - Calculate your Body Mass Index quickly and easily with our intuitive app.
+
+🔑 KEYSTORE DETAILS:
+Store File: bmi-calculator-key.jks
+Store Password: android
+Key Alias: bmi-calculator-key
+Key Password: android
+Validity: Until 2052
+
+📤 PLAY STORE FILES:
+Upload File: app-release.aab (from build/app/outputs/bundle/release/)
+Build Command: flutter build appbundle --release
+
+🔄 FOR FUTURE UPDATES:
+1. Update version in pubspec.yaml (e.g., version: 1.0.1+2)
+2. Run: flutter build appbundle --release
+3. Upload new .aab file to Play Store
+4. Use same keystore files (NEVER change these)
+
+⚠️  CRITICAL: 
+- NEVER lose the .jks file and key.properties
+- WITHOUT these files, you CANNOT update the app
+- Keep these files safe and backed up
+
+📂 GITHUB REPOSITORY:
+Source code and other files stored in GitHub
+Only these licensing files kept in Google Drive
+
+🗓️ Backup Date: $(date)
+💻 Created by: Geo Paulson
+📧 Contact: ghonestapps 

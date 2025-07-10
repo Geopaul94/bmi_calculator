@@ -1,9 +1,0 @@
-bindings:
-- members:
-  - serviceAccount:40009640461@cloudbuild.gserviceaccount.com
-  role: roles/cloudkms.cryptoKeyDecrypter
-- members:
-  - user:geo.paulson@laennec.ai
-  role: roles/cloudkms.cryptoKeyEncrypter
-etag: BwY2Vu34R_0=
-version: 1

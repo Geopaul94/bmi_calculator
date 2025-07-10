@@ -82,7 +82,7 @@ class ResultScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        _getBMIDescription(bmiCategory),
+                        getBMIDescription(bmiCategory),
                         style: theme.textTheme.bodyLarge,
                         textAlign: TextAlign.center,
                       ),
@@ -121,7 +121,7 @@ class ResultScreen extends StatelessWidget {
     );
   }
 
-  String _getBMIDescription(String category) {
+  String getBMIDescription(String category) {
     switch (category) {
       case 'Underweight':
         return 'Your BMI indicates that you are underweight. Consider consulting with a healthcare provider about healthy ways to gain weight.';

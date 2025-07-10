@@ -1,4 +1,4 @@
-package com.geo.bmiapp
+package com.example.bmi_calculator
 
 import io.flutter.embedding.android.FlutterActivity
 
