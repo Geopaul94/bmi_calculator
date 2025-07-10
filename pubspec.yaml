@@ -58,7 +58,7 @@ flutter:
 
   # Optimize assets - only include what's needed
   assets:
-    - assets/images/gender-others.png
+    - assets/images/
 
   # Exclude unnecessary font weights to reduce size
   fonts: []
