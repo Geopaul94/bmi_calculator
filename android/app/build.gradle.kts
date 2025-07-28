@@ -56,23 +56,23 @@ android {
 
     buildTypes {
         release {
-            // Optimized for Android 14 compatibility
-            isMinifyEnabled = true
-            isShrinkResources = false
+            // MAXIMUM OPTIMIZATION FOR PLAY STORE
+            isMinifyEnabled = true                    // Enable ProGuard code shrinking
+            isShrinkResources = true                 // Remove unused resources (CRITICAL)
             
-            // Use optimized ProGuard rules for maximum compression
+            // Use maximum optimization ProGuard rules
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
             
-            // Disable debugging and other unnecessary features
+            // Disable all debugging features for maximum performance
             isDebuggable = false
             isJniDebuggable = false
             isPseudoLocalesEnabled = false
             
-            // Optimize resources
-            isCrunchPngs = true
+            // Optimize resources for maximum compression
+            isCrunchPngs = true                      // Compress PNG files
             
             // Use release signing config
             signingConfig = signingConfigs.getByName("release")
@@ -119,7 +119,7 @@ android {
         disable.addAll(listOf("VectorPath", "UnusedResources"))
     }
 
-    // Packaging optimizations
+    // MAXIMUM PACKAGING OPTIMIZATIONS FOR SMALLEST AAB
     packaging {
         resources {
             excludes += listOf(
@@ -127,22 +127,44 @@ android {
                 "META-INF/LICENSE*",
                 "META-INF/NOTICE*",
                 "META-INF/*.kotlin_module",
+                "META-INF/*.version",
+                "META-INF/maven/**",
+                "META-INF/services/**",
                 "kotlin/**",
                 "**/*.txt",
                 "**/*.xml",
-                "**/*.properties"
+                "**/*.properties",
+                "**/*.version",
+                "**/*.git*",
+                "**/LICENSE*",
+                "**/NOTICE*",
+                "**/README*",
+                "**/CHANGELOG*",
+                "**/COPYING*",
+                "**/COPYRIGHT*",
+                "**/AUTHORS*",
+                "**/CONTRIBUTORS*",
+                "**/DEPENDENCIES*"
             )
         }
         jniLibs {
             useLegacyPackaging = false
-            excludes += listOf("**/libc++_shared.so", "**/libjsc.so")
+            excludes += listOf(
+                "**/libc++_shared.so",
+                "**/libjsc.so",
+                "**/libfbjni.so",
+                "**/libfolly_runtime.so",
+                "**/libreactnativejni.so",
+                "**/libturbomodulejsijni.so",
+                "**/libyoga.so"
+            )
         }
         dex {
             useLegacyPackaging = false
         }
     }
 
-    // App Bundle optimizations
+    // MAXIMUM AAB OPTIMIZATIONS FOR PLAY STORE
     bundle {
         language {
             enableSplit = true
@@ -151,6 +173,10 @@ android {
             enableSplit = true
         }
         abi {
+            enableSplit = true
+        }
+        // Enable all possible splits for maximum size reduction
+        texture {
             enableSplit = true
         }
     }
